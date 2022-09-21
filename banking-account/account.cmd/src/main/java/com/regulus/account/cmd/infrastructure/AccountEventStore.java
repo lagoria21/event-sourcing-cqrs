@@ -6,6 +6,7 @@ import com.regulus.cqrs.core.events.EventModel;
 import com.regulus.cqrs.core.exceptions.AggregateNotFoundException;
 import com.regulus.cqrs.core.exceptions.ConcurrencyException;
 import com.regulus.cqrs.core.infrastructure.EventStore;
+import com.regulus.cqrs.core.producers.EventProducer;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,8 +18,11 @@ public class AccountEventStore implements EventStore {
 
     private final EventStoreRepository eventStoreRepository;
 
-    public AccountEventStore(EventStoreRepository eventStoreRepository) {
+    private final EventProducer eventProducer;
+
+    public AccountEventStore(EventStoreRepository eventStoreRepository, EventProducer eventProducer) {
         this.eventStoreRepository = eventStoreRepository;
+        this.eventProducer = eventProducer;
     }
 
     @Override
@@ -43,8 +47,8 @@ public class AccountEventStore implements EventStore {
 
             var persistedEvent = eventStoreRepository.save(eventModel);
 
-            if(persistedEvent != null) {
-                 //producir event a kafka
+            if(!persistedEvent.getId().isEmpty()) {
+                 eventProducer.produce(event.getClass().getSimpleName(), event);
             }
         }
     }
