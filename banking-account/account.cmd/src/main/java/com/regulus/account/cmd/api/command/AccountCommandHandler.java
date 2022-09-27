@@ -2,17 +2,14 @@ package com.regulus.account.cmd.api.command;
 
 import com.regulus.account.cmd.domain.AccountAggregate;
 import com.regulus.cqrs.core.handlers.EventSourcingHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccountCommandHandler implements CommandHandler{
 
-    private final EventSourcingHandler<AccountAggregate> eventSourcingHandler;
-
-    public AccountCommandHandler(EventSourcingHandler<AccountAggregate> eventSourcingHandler) {
-        this.eventSourcingHandler = eventSourcingHandler;
-    }
-
+    @Autowired
+    private EventSourcingHandler<AccountAggregate> eventSourcingHandler;
 
     @Override
     public void handle(OpenAccountCommand command) {

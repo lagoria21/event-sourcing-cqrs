@@ -9,8 +9,8 @@ spring:
       ddl-auto: update
   datasource:
     url: jdbc:mysql://localhost:3306/bankingAccount?createDatabaseIfNotExist=true
-    username: root
-    password: Beto2021$$
+    username: "root"
+    password: "Beto2021$"
   kafka:
     listener:
       ack-mode: MANUAL_IMMEDIATE
@@ -18,8 +18,8 @@ spring:
       bootstrap-servers: localhost:9092
       group-id: bankConsumer
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring:
           json:

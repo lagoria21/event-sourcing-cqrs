@@ -7,6 +7,7 @@ import com.regulus.cqrs.core.exceptions.AggregateNotFoundException;
 import com.regulus.cqrs.core.exceptions.ConcurrencyException;
 import com.regulus.cqrs.core.infrastructure.EventStore;
 import com.regulus.cqrs.core.producers.EventProducer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -16,18 +17,16 @@ import java.util.stream.Collectors;
 @Service
 public class AccountEventStore implements EventStore {
 
-    private final EventStoreRepository eventStoreRepository;
+    @Autowired
+    private EventProducer eventProducer;
 
-    private final EventProducer eventProducer;
-
-    public AccountEventStore(EventStoreRepository eventStoreRepository, EventProducer eventProducer) {
-        this.eventStoreRepository = eventStoreRepository;
-        this.eventProducer = eventProducer;
-    }
+    @Autowired
+    private EventStoreRepository eventStoreRepository;
 
     @Override
     public void saveEvent(String aggregateId, Iterable<BaseEvent> events, int expectedVersion) {
-        var eventStream = eventStoreRepository.findByAggregateIdentifier(aggregateId);
+
+     var eventStream = eventStoreRepository.findByAggregateIdentifier(aggregateId);
         if(expectedVersion != -1 && eventStream.get(eventStream.size() -1).getVersion() != expectedVersion){
             throw new ConcurrencyException();
         }
